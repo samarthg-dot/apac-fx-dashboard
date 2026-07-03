@@ -25,7 +25,11 @@ export default async function Page() {
     <div className="min-h-screen bg-background">
       <DashboardHeader />
       <main className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6 lg:px-8">
-        <ExecutiveCards lastUpdated={lastUpdated} count={rates.length} />
+        <ExecutiveCards
+       lastUpdated={lastUpdated}
+       count={rates.length}
+       isLive={isLive}
+       />
         <FxTable rates={rates} />
         <section aria-label="Charts">
           <ChartPlaceholders />

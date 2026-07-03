@@ -1,5 +1,12 @@
 import { Card, CardContent } from "@/components/ui/card"
-import { Clock, DollarSign, Globe2, RefreshCw } from "lucide-react"
+import {
+  Clock,
+  DollarSign,
+  Globe2,
+  RefreshCw,
+  Wifi,
+  WifiOff,
+} from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 
 type Metric = {
@@ -12,7 +19,15 @@ type Metric = {
   valueClassName?: string
 }
 
-export function ExecutiveCards({ lastUpdated, count }: { lastUpdated: string; count: number }) {
+export function ExecutiveCards({
+  lastUpdated,
+  count,
+  isLive,
+}: {
+  lastUpdated: string
+  count: number
+  isLive: boolean
+}) {
   const metrics: Metric[] = [
     {
       label: "Last Updated",
@@ -47,10 +62,24 @@ export function ExecutiveCards({ lastUpdated, count }: { lastUpdated: string; co
       accent: "bg-[oklch(0.7_0.16_55)]",
       iconBg: "bg-[oklch(0.95_0.05_75)] text-[oklch(0.5_0.14_55)]",
     },
+    {
+  label: "Data Status",
+  value: isLive ? "LIVE" : "OFFLINE",
+  hint: isLive
+    ? "Exchange rates available"
+    : "Using fallback data",
+  icon: isLive ? Wifi : WifiOff,
+  accent: isLive
+    ? "bg-green-500"
+    : "bg-red-500",
+  iconBg: isLive
+    ? "bg-green-100 text-green-700"
+    : "bg-red-100 text-red-700",
+   },
   ]
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
       {metrics.map((m) => (
         <Card
           key={m.label}
