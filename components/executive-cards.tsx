@@ -32,7 +32,7 @@ export function ExecutiveCards({
     {
       label: "Last Updated",
       value: `${lastUpdated} IST`,
-      hint: "3:00 PM IST daily fixing",
+      hint: "Live market",
       icon: Clock,
       accent: "bg-primary",
       iconBg: "bg-primary/10 text-primary",
@@ -56,8 +56,8 @@ export function ExecutiveCards({
     },
     {
       label: "Auto Refresh",
-      value: "15 min",
-      hint: "Every 15 minutes",
+      value: "5 min",
+      hint: "Every 5 minutes",
       icon: RefreshCw,
       accent: "bg-[oklch(0.7_0.16_55)]",
       iconBg: "bg-[oklch(0.95_0.05_75)] text-[oklch(0.5_0.14_55)]",
