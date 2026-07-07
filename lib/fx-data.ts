@@ -107,7 +107,7 @@ async function fetchLiveRates(): Promise<Record<string, number>> {
 
 /** Build the FX snapshot using the 3:00 PM IST daily reference fixing. */
 export async function getFxSnapshot(): Promise<FxSnapshot> {
-  const { date, iso } = referenceIstDate()
+  const { date } = referenceIstDate()
 
   try {
     const [{ latest, prev }, live] = await Promise.all([fetchReferenceRates(date), fetchLiveRates()])
