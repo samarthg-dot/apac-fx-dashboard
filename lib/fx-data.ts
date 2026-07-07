@@ -126,7 +126,11 @@ export async function getFxSnapshot(): Promise<FxSnapshot> {
 
     if (rates.length === 0) throw new Error("No usable rates")
 
-    return { rates, updatedAt: iso, isLive: true }
+    return {
+  rates,
+  updatedAt: new Date().toISOString(),
+  isLive: true,
+}
   } catch {
     // Fallback: return metadata with no rates rather than crashing the page.
     return {
