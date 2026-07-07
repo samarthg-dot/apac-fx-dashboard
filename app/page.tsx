@@ -5,7 +5,7 @@ import { FxTable } from "@/components/fx-table"
 import { ChartPlaceholders } from "@/components/chart-placeholder"
 import { getFxSnapshot } from "@/lib/fx-data"
 
-export const revalidate = 900
+export const revalidate = 300
 
 export default async function Page() {
   const { rates, updatedAt, isLive } = await getFxSnapshot()
