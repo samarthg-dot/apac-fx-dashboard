@@ -47,7 +47,7 @@ function toStatus(change: number): FxStatus {
 }
 
 async function fetchLiveRates(): Promise<Record<string, number>> {
-  const url = `https://api.twelvedata.com/exchange_rate`
+  const url = `https://open.er-api.com/v6/latest/USD`
 
   const res = await fetch(url, {
     next: {
