@@ -1,5 +1,6 @@
 import { DashboardHeader } from "@/components/dashboard-header"
 import { ExecutiveCards } from "@/components/executive-cards"
+import { AutoRefresh } from "@/components/auto-refresh"
 import { FxTable } from "@/components/fx-table"
 import { ChartPlaceholders } from "@/components/chart-placeholder"
 import { getFxSnapshot } from "@/lib/fx-data"
@@ -23,6 +24,7 @@ export default async function Page() {
 
   return (
     <div className="min-h-screen bg-background">
+      <AutoRefresh />
       <DashboardHeader />
       <main className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6 lg:px-8">
         <ExecutiveCards
