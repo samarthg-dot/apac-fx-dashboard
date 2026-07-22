@@ -36,9 +36,14 @@ export const currencies: CurrencyMeta[] = [
   { country: "New Zealand", currencyName: "New Zealand Dollar", code: "NZD", countryCode: "nz" },
 ]
 
-const codes = currencies.map((c) => c.code)
+export type FxApiResponse = {
+  amount: number
+  base: string
+  date: string
+  rates: Record<string, number>
+}
 
-let previousRates: Record<string, number> = {}
+const BASE_URL = "https://api.frankfurter.dev/v1"
 
 function toStatus(change: number): FxStatus {
   if (change > 0.01) return "up"
@@ -46,38 +51,50 @@ function toStatus(change: number): FxStatus {
   return "flat"
 }
 
-async function fetchLiveRates(): Promise<Record<string, number>> {
-  const url = `https://open.er-api.com/v6/latest/USD`
+async function fetchRates(date?: string): Promise<Record<string, number>> {
+  const endpoint = date
+    ? `${BASE_URL}/${date}?base=USD`
+    : `${BASE_URL}/latest?base=USD`
 
-  const res = await fetch(url, {
+  const res = await fetch(endpoint, {
     next: {
-      revalidate: 300,
+      revalidate: 300, // Refresh every 5 minutes
     },
   })
 
-  if (!res.ok) throw new Error("Unable to fetch FX data")
+  if (!res.ok) {
+    throw new Error("Unable to fetch FX data")
+  }
 
-  const data = await res.json()
+  const data: FxApiResponse = await res.json()
 
   return data.rates
 }
 
 export async function getFxSnapshot(): Promise<FxSnapshot> {
   try {
-    const live = await fetchLiveRates()
+    const yesterday = new Date()
+    yesterday.setUTCDate(yesterday.getUTCDate() - 1)
+
+    const yesterdayDate = yesterday.toISOString().split("T")[0]
+
+    const [todayRates, yesterdayRates] = await Promise.all([
+      fetchRates(),
+      fetchRates(yesterdayDate),
+    ])
 
     const rates: CurrencyRate[] = currencies
       .map((currency) => {
-        const current = live[currency.code] ?? 0
+        const current = todayRates[currency.code]
 
-        const previous = previousRates[currency.code] ?? current
+        if (current == null) return null
+
+        const previous = yesterdayRates[currency.code] ?? current
 
         const change =
           previous === 0
             ? 0
             : ((current - previous) / previous) * 100
-
-        previousRates[currency.code] = current
 
         return {
           ...currency,
@@ -86,14 +103,16 @@ export async function getFxSnapshot(): Promise<FxSnapshot> {
           status: toStatus(change),
         }
       })
-      .filter((r) => r.rate > 0)
+      .filter((r): r is CurrencyRate => r !== null)
 
     return {
       rates,
       updatedAt: new Date().toISOString(),
       isLive: true,
     }
-  } catch {
+  } catch (error) {
+    console.error("FX API Error:", error)
+
     return {
       rates: currencies.map((c) => ({
         ...c,
